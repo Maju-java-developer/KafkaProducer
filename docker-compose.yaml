@@ -71,5 +71,5 @@ services:
       ports:
         - "8070:8080"
       depends_on:
-        - kafka
         - mysql
+        - kafka
