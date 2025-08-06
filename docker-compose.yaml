@@ -65,12 +65,11 @@ services:
     networks:
       kafka-net:
 
-#  kafka-springboot:
-#      build: .
-#      container_name: kafka-springboot
-#      ports:
-#        - "8070:8080"
-#      depends_on:
-#        - kafka
-#        - mysql
-
+  kafka-app:
+      build: .
+      container_name: kafka-app
+      ports:
+        - "8070:8080"
+      depends_on:
+        - kafka
+        - mysql
