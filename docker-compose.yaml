@@ -1,0 +1,76 @@
+version: '3'
+
+volumes:
+  mysql_data:
+
+networks:
+  kafka-net:
+
+# Images declarations
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - "3305:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: kafka_demo_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      kafka-net:
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    networks:
+      kafka-net:
+
+  kafka:
+    image: bitnami/kafka:3.5
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"  # for host/Provectus UI
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_HOST://host.docker.internal:29092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_KRAFT_MODE_ENABLED=no  # ✅ Force use of Zookeeper
+    depends_on:
+      - zookeeper
+    networks:
+      kafka-net:
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 9091:8080
+    environment:
+      - DYNAMIC_CONFIG_ENABLED=true
+      - KAFKA_CLUSTERS_0_NAME=local-kafka
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    depends_on:
+      - kafka
+    networks:
+      kafka-net:
+
+#  kafka-springboot:
+#      build: .
+#      container_name: kafka-springboot
+#      ports:
+#        - "8070:8080"
+#      depends_on:
+#        - kafka
+#        - mysql
+
