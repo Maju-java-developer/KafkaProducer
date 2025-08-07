@@ -1,14 +1,23 @@
-# Use Java 17 base image
-FROM openjdk:17-jdk-slim
+# Build stage
+FROM maven:3.8-openjdk-17-slim AS builder
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the WAR file from the target directory to the container
-COPY target/kafka.war kafka.war
+# Copy the entire source code (including pom.xml)
+COPY . .
 
-# Expose the port your Spring Boot app runs on
+# Build the application (adjust if you're using Gradle)
+RUN mvn clean install -DskipTests
+
+# Runtime stage
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# Copy the war file from the build stage
+COPY --from=builder /app/target/kafka.war kafka.war
+
 EXPOSE 8080
 
 # Run the Spring Boot app
-ENTRYPOINT ["java", "-jar", "kafka.war"]
+ENTRYPOINT ["java", "-war", "kafka.war"]

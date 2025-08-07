@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y maven && \
     mvn -v
 
-    # Install docker CLI
+# Install docker CLI
 RUN apt-get update && apt-get install -y docker.io curl
 
 # Install docker-compose
