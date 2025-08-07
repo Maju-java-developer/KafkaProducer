@@ -21,6 +21,10 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       kafka-net:
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
 
   zookeeper:
     image: bitnami/zookeeper:latest
