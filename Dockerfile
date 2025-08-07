@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy the entire source code (including pom.xml)
 COPY . .
 
-# Build the application (adjust if you're using Gradle)
-RUN mvn clean install -DskipTests
+## Build the application (adjust if you're using Gradle)
+#RUN mvn clean install -DskipTests
 
 # Runtime stage
 FROM openjdk:17-jdk-slim
