@@ -1,10 +1,26 @@
 version: '3'
 
+volumes:
+  mysql_data:
+
 networks:
   kafka-net:
 
 # Images declarations
 services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kafka_demo_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: kafka_demo_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      kafka-net:
 
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -55,5 +71,10 @@ services:
       container_name: kafka-app
       ports:
         - "8070:8080"
+      environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/kafka_demo_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+        SPRING_DATASOURCE_USERNAME: root
+        SPRING_DATASOURCE_PASSWORD: root
       depends_on:
         - kafka
+        - mysql

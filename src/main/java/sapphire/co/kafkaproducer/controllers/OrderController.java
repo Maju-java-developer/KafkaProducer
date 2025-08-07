@@ -29,4 +29,13 @@ public class OrderController {
 
         return ResponseEntity.ok(responseDto);
     }
+
+    @PostMapping("test")
+    public ResponseEntity<?> test() {
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setMessage("Test Service successfully");
+        responseDto.setCode(0);
+        return ResponseEntity.ok(responseDto);
+    }
+
 }
