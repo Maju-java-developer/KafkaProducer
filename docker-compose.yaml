@@ -5,6 +5,7 @@ volumes:
 
 networks:
   kafka-net:
+    driver: bridge
 
 # Images declarations
 services:
@@ -19,12 +20,12 @@ services:
       MYSQL_DATABASE: kafka_demo_db
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      kafka-net:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       retries: 5
+    networks:
+      kafka-net:
 
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -82,3 +83,5 @@ services:
       depends_on:
         - kafka
         - mysql
+      networks:
+        kafka-net:
