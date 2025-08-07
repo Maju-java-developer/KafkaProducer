@@ -20,4 +20,4 @@ COPY --from=builder /app/target/kafka.war kafka.war
 EXPOSE 8080
 
 # Run the Spring Boot app
-ENTRYPOINT ["java", "-war", "kafka.war"]
+ENTRYPOINT ["java", "-jar", "kafka.war"]
